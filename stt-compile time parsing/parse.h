@@ -102,9 +102,9 @@ struct either {
 /**
     Parsers the first match in an list of choices.
 */
-template <typename... options>
+template <typename option, typename... options>
 struct choice :
-    fold<mfunc<either>, never<None>, options...>::type { };
+    fold<mfunc<either>, option, options...>::type { };
 
 /**
     Run `p`. If it fails, succeed with `def`.
@@ -157,7 +157,7 @@ struct _token_apply<test, s, stream<c, input...>, error> {
         State<rest, typename s::position::next>>;
 };
 
-template <typename test, typename error = constant<None>>
+template <typename test, typename error = constant<Value<int, 22>>>
 struct token {
     template <typename s>
     using apply = _token_apply<test, s, typename s::input, error>;
@@ -279,7 +279,17 @@ struct inRange {
 /**
 */
 template<char begin, char end>
-struct characterRanage : token<inRange<begin, end>> { };
+struct characterRanage {
+    struct error {
+        template <typename pos, typename val>
+        struct apply {
+            using type = ExpectError<pos, stream<begin, '-', end>, val>;
+        };
+    };
+    
+    template <typename s>
+    using apply = identity<parse_t<token<inRange<begin, end>, error>, s>>;
+};
 
 /**
 */
@@ -302,4 +312,11 @@ struct string : seq<
     character<elements>...,
     always<stream<elements...>>> { };
 
+/**
+*/
+template <char first, char... rest>
+struct commitedString : seq<
+    character<first>,
+    commit<character<rest>>...,
+    always<stream<first, rest...>>> { };
 

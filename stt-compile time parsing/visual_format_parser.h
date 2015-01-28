@@ -20,9 +20,9 @@ struct orientation : choice<character<'H'>, character<'V'>> { };
 struct superview : character<'|'> { };
 
 struct relation : choice<
-    string<'=', '='>,
-    string<'<', '='>,
-    string<'>', '='>> { };
+    commitedString<'=', '='>,
+    commitedString<'<', '='>,
+    commitedString<'>', '='>> { };
 
 struct positiveNumber : many1<anyDigit> { };
 
