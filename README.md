@@ -1,18 +1,13 @@
-/**
-    Example parser for the Apple visual format language.
-    
-    Only can indicate if the parsing is successful or not. Does not produce any
-    meaningful values or error messages.
- 
-    https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/AutolayoutPG/VisualFormatLanguage/VisualFormatLanguage.html
-*/
-#pragma once
+# Compile Time C++ Parser Combinators
 
-#include "parse.h"
-#include "utility.h"
+Demonstration of compile time parser combinators as a C++ template metaprogram. Allows parsing arbitrary strings at compile time to produce a type result.
 
-namespace VisualFormat {
+Example shows the parsing of [Apple's autolayout visual format strings][visual format] at compile time to check their validity. This could easily be extended to produce an type representing the contents of the visual format string.
 
+Syntax of parsers is very readable:
+
+
+```langcpp
 struct orientation : choice<character<'H'>, character<'V'>> { };
 
 struct superview : character<'|'> { };
@@ -61,5 +56,7 @@ struct visualFormatString : seq<
     view,
     many<next<connection, view>>,
     optional<None, then<connection, superview>>> { };
+```
 
-} // VisualFormat
+[visual format]: https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/AutolayoutPG/VisualFormatLanguage/VisualFormatLanguage.html
+
