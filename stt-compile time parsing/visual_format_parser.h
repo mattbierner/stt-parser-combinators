@@ -56,7 +56,7 @@ struct view :
             optional<List<>, predicateListWithParens>>> { };
 
 struct visualFormatString : seq<
-    optional<None, then<orientation, character<':'>>>,
+    optional<None, then<orientation, commit<character<':'>>>>,
     optional<None, next<superview, connection>>,
     view,
     many<next<connection, view>>,

@@ -3,6 +3,15 @@
 #include "printer.h"
 
 /**
+*/
+enum class ResultType
+{
+    Success,
+    Failure,
+    CommitedFailure
+};
+
+/**
     Position in the parsed string.
 */
 template <size_t i>
@@ -46,10 +55,10 @@ struct Printer<State<input, position>>
 /**
     Result of parsing.
 */
-template <bool suc, typename val, typename r>
+template <ResultType suc, typename val, typename r>
 struct Result
 {
-    static const bool success = suc;
+    static const ResultType success = suc;
     using value = val;
     using rest = r;
 };
@@ -59,7 +68,7 @@ struct Printer<Result<suc, val, r>>
 {
     static std::ostream& Print(std::ostream& output)
     {
-        output << "Result:" << std::boolalpha << suc << " (";
+        output << "Result:" << static_cast<int>(suc) << " (";
         Printer<val>::Print(output) << ") ";
         Printer<r>::Print(output);
         return output;

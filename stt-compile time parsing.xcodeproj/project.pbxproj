@@ -33,6 +33,7 @@
 		896C648B1A7884CA00C2B0EB /* visual_format_parser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = visual_format_parser.h; sourceTree = "<group>"; };
 		896C648C1A78858900C2B0EB /* parse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = parse.h; sourceTree = "<group>"; };
 		896C648D1A788A1400C2B0EB /* parse_state.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = parse_state.h; sourceTree = "<group>"; };
+		896C648E1A78A94700C2B0EB /* parse_error.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = parse_error.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +75,7 @@
 				896C648A1A7775A000C2B0EB /* value_list.h */,
 				896C648B1A7884CA00C2B0EB /* visual_format_parser.h */,
 				896C648D1A788A1400C2B0EB /* parse_state.h */,
+				896C648E1A78A94700C2B0EB /* parse_error.h */,
 			);
 			path = "stt-compile time parsing";
 			sourceTree = "<group>";

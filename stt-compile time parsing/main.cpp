@@ -30,7 +30,8 @@ struct Printer<None>
 int main(int argc, const char* argv[])
 {
     using parser = VisualFormat::visualFormatString;
-    using x = parse_t<parser, State<decltype("H:|-[a(==2@20)]-|"_stream), Position<0>>>;
+    using x = run_parser<parser, decltype("H:|-[a(==2@20)]-|"_stream)>;
+   
     Printer<x>::Print(std::cout);
     return 0;
 }

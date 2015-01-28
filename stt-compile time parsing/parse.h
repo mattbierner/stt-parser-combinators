@@ -1,6 +1,8 @@
 #pragma once
 
+#include "parse_error.h"
 #include "parse_state.h"
+#include "value_list.h"
 
 /**
 */
@@ -8,12 +10,17 @@ template <typename parser, typename input>
 using parse_t = call<parser, input>;
 
 /**
+*/
+template <typename parser, typename input>
+using run_parser = typename parse_t<parser, State<input, Position<0>>>::value;
+
+/**
     Succeed with value `x` without consuming any input.
 */
 template <typename x>
 struct always {
     template <typename input>
-    using apply = identity<Result<true, x, input>>;
+    using apply = identity<Result<ResultType::Success, x, input>>;
 };
 
 /**
@@ -22,7 +29,7 @@ struct always {
 template <typename x>
 struct never {
     template <typename input>
-    using apply = identity<Result<false, x, input>>;
+    using apply = identity<Result<ResultType::Failure, x, input>>;
 };
 
 /**
@@ -41,7 +48,7 @@ struct bind {
     struct apply {
         using result = parse_t<p, input>;
         
-        using type = typename std::conditional<result::success,
+        using type = typename std::conditional<result::success == ResultType::Success,
             andThen<result>,
             identity<result>>::type::type;
     };
@@ -85,9 +92,9 @@ struct either {
         using result = parse_t<p, s>;
         
         using type = call<
-            typename std::conditional<result::success,
-                constant<result>,
-                q>::type,
+            typename std::conditional<result::success == ResultType::Failure,
+                q,
+                constant<result>>::type,
             s>;
     };
 };
@@ -100,53 +107,85 @@ struct choice :
     fold<mfunc<either>, never<None>, options...>::type { };
 
 /**
+    Run `p`. If it fails, succeed with `def`.
 */
 template <typename def, typename p>
 struct optional : either<p, always<def>> { };
 
 /**
+*/
+template <typename p>
+struct commit {
+    template <typename s>
+    struct apply {
+        using result = parse_t<p, s>;
+        
+        using type = Result<
+            (result::success == ResultType::Failure ? ResultType::CommitedFailure : result::success),
+            typename result::value,
+            typename result::rest>;
+    };
+};
+
+/**
     Parser that consumes the first entry in the stream if it matches a given 
     function.
 */
-template <typename test, typename s, typename input>
+template <typename test, typename s, typename input, typename error>
 struct _token_apply {
-    using type = Result<false, None, s>;
+    using type = Result<
+        ResultType::Failure,
+        call<error, typename s::position, decltype("eof"_stream)>,
+        s>;
 };
 
-template <typename test, typename s, char c, char... input>
-struct _token_apply<test, s, stream<c, input...>> {
+template <typename test, typename s, char c, char... input,  typename error>
+struct _token_apply<test, s, stream<c, input...>, error> {
     static const bool consume = test::template apply<c>::value;
     
     using result = typename std::conditional<consume,
         Value<char, c>,
-        None>::type;
+        call<error, typename s::position, Value<char, c>>>::type;
     
     using rest = typename std::conditional<consume,
         stream<input...>,
         stream<c, input...>>::type;
     
-    using type = Result<consume, result, State<rest, typename s::position::next>>;
+    using type = Result<
+        (consume ? ResultType::Success : ResultType::Failure),
+        result,
+        State<rest, typename s::position::next>>;
 };
 
-template <typename test>
+template <typename test, typename error = constant<None>>
 struct token {
     template <typename s>
-    using apply = _token_apply<test, s, typename s::input>;
+    using apply = _token_apply<test, s, typename s::input, error>;
 };
 
 /**
     Matches character `c`.
 */
 template <char c>
-struct character : token<equals<char, c>> { };
+struct character {
+    struct error {
+        template <typename pos, typename val>
+        struct apply {
+            using type = ExpectError<pos, Value<char, c>, val>;
+        };
+    };
+    
+    template <typename s>
+    using apply = identity<parse_t<token<equals<char, c>, error>, s>>;
+};
 
 /**
     Matches end of input.
 */
 struct Eof {
-    template <typename input>
+    template <typename s>
     struct apply {
-        using type = Result<input::size() == 0, None, input>;
+        using type = Result<s::input::size() == 0, None, s>;
     };
 };
 
@@ -165,8 +204,8 @@ struct binary {
         };
     };
 
-    template <typename input>
-    using apply = identity<parse_t<bind<p, inner1>, input>>;
+    template <typename s>
+    using apply = identity<parse_t<bind<p, inner1>, s>>;
 };
 
 /**
