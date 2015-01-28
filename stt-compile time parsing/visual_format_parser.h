@@ -31,11 +31,11 @@ struct number :
         optional<None, character<'-'>>,
         positiveNumber>  { };
 
-struct name : identifier { };
+struct name : many1<anyLetter> { };
 
-struct priority : choice<identifier, number> { };
+struct priority : choice<name, number> { };
 
-struct constant : choice<identifier, number> { };
+struct constant : choice<name, number> { };
 
 struct objectOfPredicate : choice<constant, name> { };
 

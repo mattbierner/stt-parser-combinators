@@ -249,11 +249,17 @@ template <typename p>
 struct many1 : consParser<p, many<p>> { };
 
 /**
+    Parse one or more occurances of `p` seperated by `sep`.
+    
+    Builds a list of results.
 */
 template <typename sep, typename p>
 struct sepBy1 : consParser<p, many<next<sep, p>>> { };
 
 /**
+    Parse zero or more occurances of `p` seperated by `sep`.
+    
+    Builds a list of results.
 */
 template <typename sep, typename p>
 struct sepBy :
@@ -267,19 +273,17 @@ struct sepBy :
 template <typename open, typename close, typename body>
 struct between : next<open, then<body, close>> { };
 
-
-
-template <char begin, char end>
-struct inRange {
-    template <char token>
-    struct apply :
-        std::integral_constant<bool, token >= begin && token <= end> { };
-};
-
 /**
+    Parse any character in `[begin, end]` character range.
 */
 template<char begin, char end>
 struct characterRanage {
+    struct inRange {
+        template <char token>
+        struct apply :
+            std::integral_constant<bool, token >= begin && token <= end> { };
+    };
+
     struct error {
         template <typename pos, typename val>
         struct apply {
@@ -288,24 +292,23 @@ struct characterRanage {
     };
     
     template <typename s>
-    using apply = identity<parse_t<token<inRange<begin, end>, error>, s>>;
+    using apply = identity<parse_t<token<inRange, error>, s>>;
 };
 
 /**
+    Parse any letter character.
 */
 struct anyLetter : choice<
     characterRanage<'a', 'z'>,
     characterRanage<'A', 'Z'>> { };
 
 /**
+    Parse any digit character.
 */
 struct anyDigit : characterRanage<'0', '9'> { };
 
 /**
-*/
-struct identifier : many1<anyLetter> { };
-
-/**
+    Parse a sequence of characters in order.
 */
 template <char... elements>
 struct string : seq<
@@ -313,6 +316,10 @@ struct string : seq<
     always<stream<elements...>>> { };
 
 /**
+    Parse a sequence of one or more characters in order.
+    
+    Fully fails if the first parsing succeeds but then any other character 
+    fails.
 */
 template <char first, char... rest>
 struct commitedString : seq<
