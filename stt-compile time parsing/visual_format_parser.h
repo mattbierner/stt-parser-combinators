@@ -1,8 +1,10 @@
 /**
     Example parser for the Apple visual format language.
     
-    Only can indicate if the parsing is successful or not. Does not produce any
-    meaningful values or error messages.
+    Only can indicate if the parsing is successful or not. Produces error messages.
+    Does not produce any meaningful values.
+    
+    Current implementation skimps on the implementation of identifiers and numbers.
  
     https://developer.apple.com/library/ios/documentation/UserExperience/Conceptual/AutolayoutPG/VisualFormatLanguage/VisualFormatLanguage.html
 */
@@ -22,44 +24,57 @@ struct relation : choice<
     string<'<', '='>,
     string<'>', '='>> { };
 
-struct number : many1<anyDigit> { };
+struct positiveNumber : many1<anyDigit> { };
 
-struct viewName : identifier { };
+struct number :
+    consParser<
+        optional<None, character<'-'>>,
+        positiveNumber>  { };
+
+struct name : identifier { };
 
 struct priority : choice<identifier, number> { };
 
 struct constant : choice<identifier, number> { };
 
-struct objectOfPredicate : choice<constant, viewName> { };
+struct objectOfPredicate : choice<constant, name> { };
 
 struct predicate : seq<
     optional<None, relation>,
     objectOfPredicate,
-    optional<None, next<character<'@'>, priority>>> { };
-
-struct predicateList : sepBy1<character<','>, predicate> { };
+    optional<None, next<character<'@'>, commit<priority>>>> { };
 
 struct predicateListWithParens :
-    between<character<'('>, character<')'>,
-        predicateList> { };
+    between<character<'('>, commit<character<')'>>,
+        commit<sepBy1<character<','>, predicate>>> { };
+
+struct simplePredicate : choice<
+    name,
+    positiveNumber> { };
+
+struct predicateList : choice<
+    simplePredicate,
+    predicateListWithParens> { };
 
 struct connection : choice<
-    between<character<'-'>, character<'-'>,
+    between<character<'-'>, commit<character<'-'>>,
         predicateList>,
     character<'-'>,
     always<None>> { };
 
 struct view :
-    between<character<'['>, character<']'>,
-        next<
-            viewName,
-            optional<List<>, predicateListWithParens>>> { };
+    between<character<'['>, commit<character<']'>>,
+        commit<next<
+            name,
+            optional<List<>, predicateListWithParens>>>> { };
 
 struct visualFormatString : seq<
     optional<None, then<orientation, commit<character<':'>>>>,
     optional<None, next<superview, connection>>,
     view,
     many<next<connection, view>>,
-    optional<None, then<connection, superview>>> { };
+    optional<None, then<connection, superview>>,
+    eof,
+    always<decltype("Format string is valid"_stream)>> { };
 
 } // VisualFormat

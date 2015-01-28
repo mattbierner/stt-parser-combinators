@@ -182,10 +182,13 @@ struct character {
 /**
     Matches end of input.
 */
-struct Eof {
+struct eof {
     template <typename s>
     struct apply {
-        using type = Result<s::input::size() == 0, None, s>;
+        using type = Result<
+            s::input::size() == 0 ? ResultType::Success : ResultType::Failure,
+            None,
+            s>;
     };
 };
 
