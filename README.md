@@ -7,7 +7,7 @@ Example shows the parsing of [Apple's autolayout visual format strings][visual f
 Syntax of parsers is very readable:
 
 
-```langcpp
+```cpp
 struct orientation : choice<character<'H'>, character<'V'>> { };
 
 struct superview : character<'|'> { };
