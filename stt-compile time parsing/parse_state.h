@@ -1,0 +1,67 @@
+#pragma once
+
+#include "printer.h"
+
+/**
+    Position in the parsed string.
+*/
+template <size_t i>
+struct Position {
+    static const size_t index = i;
+    
+    using next = Position<i + 1>;
+};
+
+template <size_t index>
+struct Printer<Position<index>>
+{
+    static std::ostream& Print(std::ostream& output)
+    {
+        return output << "Position:" << index;
+    }
+};
+
+/**
+    Parsing state.
+*/
+template <typename i, typename pos>
+struct State {
+    using input = i;
+    using position = pos;
+};
+
+
+template <typename input, typename position>
+struct Printer<State<input, position>>
+{
+    static std::ostream& Print(std::ostream& output)
+    {
+        Printer<input>::Print(output);
+        Printer<position>::Print(output);
+        return output;
+    }
+};
+
+
+/**
+    Result of parsing.
+*/
+template <bool suc, typename val, typename r>
+struct Result
+{
+    static const bool success = suc;
+    using value = val;
+    using rest = r;
+};
+
+template <bool suc, typename val, typename r>
+struct Printer<Result<suc, val, r>>
+{
+    static std::ostream& Print(std::ostream& output)
+    {
+        output << "Result:" << std::boolalpha << suc << " (";
+        Printer<val>::Print(output) << ") ";
+        Printer<r>::Print(output);
+        return output;
+    }
+};
