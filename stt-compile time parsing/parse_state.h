@@ -57,16 +57,15 @@ struct Printer<State<input, position>>
     }
 };
 
-
 /**
     Result of parsing.
 */
-template <ResultType suc, typename val, typename r>
+template <ResultType suc, typename x, typename s>
 struct Result
 {
     static const ResultType success = suc;
-    using value = val;
-    using rest = r;
+    using value = x;
+    using state = s;
 };
 
 template <bool suc, typename val, typename r>

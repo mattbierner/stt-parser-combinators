@@ -42,7 +42,7 @@ struct bind {
     template <typename result>
     struct andThen {
         using parser = call<f, typename result::value>;
-        using type = parse<parser, typename result::rest>;
+        using type = parse<parser, typename result::state>;
     };
 
     template <typename input>
@@ -125,7 +125,7 @@ struct commit {
         using type = Result<
             (result::success == ResultType::Failure ? ResultType::Error : result::success),
             typename result::value,
-            typename result::rest>;
+            typename result::state>;
     };
 };
 
@@ -149,14 +149,14 @@ struct _token_apply<test, s, stream<c, input...>, error> {
         Value<char, c>,
         call<error, typename s::position, Value<char, c>>>::type;
     
-    using rest = typename std::conditional<consume,
+    using state = typename std::conditional<consume,
         stream<input...>,
         stream<c, input...>>::type;
     
     using type = Result<
         (consume ? ResultType::Success : ResultType::Failure),
         result,
-        State<rest, typename s::position::next>>;
+        State<state, typename s::position::next>>;
 };
 
 template <typename test, typename error = constant<Value<int, 22>>>
@@ -325,9 +325,9 @@ struct string : seq<
     Fully fails if the first parsing succeeds but then any other character 
     fails.
 */
-template <char first, char... rest>
+template <char first, char... state>
 struct commitedString : seq<
     character<first>,
-    commit<character<rest>>...,
-    always<stream<first, rest...>>> { };
+    commit<character<state>>...,
+    always<stream<first, state...>>> { };
 

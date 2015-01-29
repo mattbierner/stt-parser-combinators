@@ -29,7 +29,7 @@ template <typename list>
 using car_t = typename car<list>::type;
 
 /**
-    Get the rest of a list, excluding the head.
+    Get the state of a list, excluding the head.
 */
 template <typename list>
 struct cdr;

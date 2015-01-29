@@ -25,11 +25,11 @@ struct Printer<stream<>>
     static std::ostream& Print(std::ostream& output) { return output; }
 };
 
-template <char x, char... rest>
-struct Printer<stream<x, rest...>>
+template <char x, char... xs>
+struct Printer<stream<x, xs...>>
 {
     static std::ostream& Print(std::ostream& output)
     {
-        return Printer<stream<rest...>>::Print(output << x);
+        return Printer<stream<xs...>>::Print(output << x);
     }
 };
