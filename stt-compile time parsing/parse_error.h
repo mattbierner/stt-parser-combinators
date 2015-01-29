@@ -5,7 +5,7 @@
 /**
 */
 template <typename pos, typename unexpected>
-struct UnexpectError {};
+struct UnexpectError { };
 
 template <typename pos, typename unexpected>
 struct Printer<UnexpectError<pos, unexpected>>
@@ -22,7 +22,7 @@ struct Printer<UnexpectError<pos, unexpected>>
 /**
 */
 template <typename pos, typename expected, typename found>
-struct ExpectError {};
+struct ExpectError { };
 
 template <typename pos, typename expected, typename found>
 struct Printer<ExpectError<pos, expected, found>>

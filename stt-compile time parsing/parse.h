@@ -8,12 +8,12 @@
 /**
 */
 template <typename parser, typename input>
-using parse_t = call<parser, input>;
+using parse = call<parser, input>;
 
 /**
 */
 template <typename parser, typename input>
-using run_parser = typename parse_t<parser, State<input, Position<0>>>::value;
+using run_parser = typename parse<parser, State<input, Position<0>>>::value;
 
 /**
     Succeed with value `x` without consuming any input.
@@ -42,12 +42,12 @@ struct bind {
     template <typename result>
     struct andThen {
         using parser = call<f, typename result::value>;
-        using type = parse_t<parser, typename result::rest>;
+        using type = parse<parser, typename result::rest>;
     };
 
     template <typename input>
     struct apply {
-        using result = parse_t<p, input>;
+        using result = parse<p, input>;
         
         using type = typename std::conditional<result::success == ResultType::Success,
             andThen<result>,
@@ -80,7 +80,7 @@ struct then {
     };
     
     template <typename input>
-    using apply = identity<parse_t<bind<p, andThen>, input>>;
+    using apply = identity<parse<bind<p, andThen>, input>>;
 };
 
 /**
@@ -90,7 +90,7 @@ template <typename p, typename q>
 struct either {
     template <typename s>
     struct apply {
-        using result = parse_t<p, s>;
+        using result = parse<p, s>;
         
         using type = call<
             typename std::conditional<result::success == ResultType::Failure,
@@ -114,15 +114,16 @@ template <typename def, typename p>
 struct optional : either<p, always<def>> { };
 
 /**
+    Convert any failures in `p` into errors.
 */
 template <typename p>
 struct commit {
     template <typename s>
     struct apply {
-        using result = parse_t<p, s>;
+        using result = parse<p, s>;
         
         using type = Result<
-            (result::success == ResultType::Failure ? ResultType::CommitedFailure : result::success),
+            (result::success == ResultType::Failure ? ResultType::Error : result::success),
             typename result::value,
             typename result::rest>;
     };
@@ -177,7 +178,7 @@ struct character {
     };
     
     template <typename s>
-    using apply = identity<parse_t<token<equals<char, c>, error>, s>>;
+    using apply = identity<parse<token<equals<char, c>, error>, s>>;
 };
 
 /**
@@ -194,6 +195,7 @@ struct eof {
 };
 
 /**
+    Parse `p` then `q`, combining results with `f`.
 */
 template <typename p, typename q, typename f>
 struct binary {
@@ -209,10 +211,11 @@ struct binary {
     };
 
     template <typename s>
-    using apply = identity<parse_t<bind<p, inner1>, s>>;
+    using apply = identity<parse<bind<p, inner1>, s>>;
 };
 
 /**
+    Conses the results of `a` onto `b`.
 */
 template <typename a, typename b>
 struct consParser {
@@ -222,7 +225,7 @@ struct consParser {
     };
     
     template <typename input>
-    using apply = identity<parse_t<binary<a, b, appendOnto>, input>>;
+    using apply = identity<parse<binary<a, b, appendOnto>, input>>;
 };
 
 /**
@@ -234,7 +237,7 @@ template <typename p>
 struct many {
     template <typename input>
     using apply = identity<
-        parse_t<
+        parse<
             either<
                 consParser<p, many<p>>,
                 always<List<>>>,
@@ -293,7 +296,7 @@ struct characterRanage {
     };
     
     template <typename s>
-    using apply = identity<parse_t<token<inRange, error>, s>>;
+    using apply = identity<parse<token<inRange, error>, s>>;
 };
 
 /**

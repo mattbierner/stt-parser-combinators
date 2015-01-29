@@ -3,12 +3,18 @@
 #include "printer.h"
 
 /**
+    How a parser returned.
 */
 enum class ResultType
 {
+    /** Parsing was successful. */
     Success,
+    
+    /** Parsing failed but we can try to recover. */
     Failure,
-    CommitedFailure
+    
+    /** Parsing failed and we cannot recover. */
+    Error
 };
 
 /**
