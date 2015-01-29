@@ -3,7 +3,6 @@
 */
 #pragma once
 
-#include "functor.h"
 #include "printer.h"
 #include "utility.h"
 
@@ -70,22 +69,6 @@ struct append<x, List<xs...>> {
 
 template <typename x, typename list>
 using append_t = typename append<x, list>::type;
-
-
-/*------------------------------------------------------------------------------
-    Functor
-*/
-template <typename f>
-struct Fmap<List<>, f> {
-    using type = List<>;
-};
-
-template <typename x, typename... xs, typename f>
-struct Fmap<List<x, xs...>, f> {
-    using type = cons_t<
-        call<f, x>,
-        fmap_t<List<xs...>, f>>;
-};
 
 /*------------------------------------------------------------------------------
     Printer

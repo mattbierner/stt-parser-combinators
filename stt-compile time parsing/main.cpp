@@ -1,6 +1,5 @@
 #include <iostream>
 
-#include "functor.h"
 #include "printer.h"
 #include "utility.h"
 #include "list.h"

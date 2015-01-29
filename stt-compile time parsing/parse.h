@@ -3,6 +3,7 @@
 #include "parse_error.h"
 #include "parse_state.h"
 #include "value_list.h"
+#include "value.h"
 
 /**
 */

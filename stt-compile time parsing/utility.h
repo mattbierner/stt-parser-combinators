@@ -36,15 +36,7 @@ template <typename f, typename... args>
 using call = typename f::template apply<args...>::type;
 
 /**
-    Compose two metafunctions to create `f(g(x))`
-*/
-template <typename f, typename g>
-struct compose {
-    template <typename... args>
-    using apply = call<f, call<g, args...>>;
-};
-
-/**
+    Transform a template into a metafunction.
 */
 template <template<typename...> class f>
 struct mfunc {
@@ -63,25 +55,4 @@ struct fold {
 template <typename f, typename z, typename x, typename... xs>
 struct fold<f, z, x, xs...> {
     using type = typename fold<f, call<f, z, x>, xs...>::type;
-};
-
-template <typename T, T x>
-struct Value { };
-
-struct None { };
-
-
-template <typename T, T x>
-struct Printer<Value<T, x>>
-{
-    static std::ostream& Print(std::ostream& output)
-    {
-        return output << std::boolalpha << x;
-    }
-};
-
-template <>
-struct Printer<None>
-{
-    static std::ostream& Print(std::ostream& output) { return output; }
 };

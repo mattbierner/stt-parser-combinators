@@ -28,12 +28,12 @@
 		896C64851A77368100C2B0EB /* printer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = printer.h; sourceTree = "<group>"; };
 		896C64871A773EEF00C2B0EB /* utility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = utility.h; sourceTree = "<group>"; };
 		896C64881A7760A600C2B0EB /* list.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = list.h; sourceTree = "<group>"; };
-		896C64891A776CA800C2B0EB /* functor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = functor.h; sourceTree = "<group>"; };
 		896C648A1A7775A000C2B0EB /* value_list.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = value_list.h; sourceTree = "<group>"; };
 		896C648B1A7884CA00C2B0EB /* visual_format_parser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = visual_format_parser.h; sourceTree = "<group>"; };
 		896C648C1A78858900C2B0EB /* parse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = parse.h; sourceTree = "<group>"; };
 		896C648D1A788A1400C2B0EB /* parse_state.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = parse_state.h; sourceTree = "<group>"; };
 		896C648E1A78A94700C2B0EB /* parse_error.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = parse_error.h; sourceTree = "<group>"; };
+		896C648F1A79D23700C2B0EB /* value.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = value.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,7 +66,6 @@
 		896C647D1A77346200C2B0EB /* stt-compile time parsing */ = {
 			isa = PBXGroup;
 			children = (
-				896C64891A776CA800C2B0EB /* functor.h */,
 				896C647E1A77346200C2B0EB /* main.cpp */,
 				896C648C1A78858900C2B0EB /* parse.h */,
 				896C64851A77368100C2B0EB /* printer.h */,
@@ -76,6 +75,7 @@
 				896C648B1A7884CA00C2B0EB /* visual_format_parser.h */,
 				896C648D1A788A1400C2B0EB /* parse_state.h */,
 				896C648E1A78A94700C2B0EB /* parse_error.h */,
+				896C648F1A79D23700C2B0EB /* value.h */,
 			);
 			path = "stt-compile time parsing";
 			sourceTree = "<group>";
