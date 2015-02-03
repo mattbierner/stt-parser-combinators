@@ -141,25 +141,22 @@ struct _token_apply {
         s>;
 };
 
-template <typename test, typename s, char c, char... input,  typename error>
+template <typename test, typename s, char c, char... input, typename error>
 struct _token_apply<test, s, stream<c, input...>, error> {
-    static const bool consume = test::template apply<c>::value;
+    static const bool shouldConsume = test::template apply<c>::value;
     
-    using result = typename std::conditional<consume,
-        Value<char, c>,
-        call<error, typename s::position, Value<char, c>>>::type;
-    
-    using state = typename std::conditional<consume,
-        stream<input...>,
-        stream<c, input...>>::type;
-    
-    using type = Result<
-        (consume ? ResultType::Success : ResultType::Failure),
-        result,
-        State<state, typename s::position::next>>;
+    using type = typename std::conditional<shouldConsume,
+        Result<
+            ResultType::Success,
+            Value<char, c>,
+            State<stream<input...>, typename s::position::next>>,
+        Result<
+            ResultType::Failure,
+            call<error, typename s::position, Value<char, c>>,
+            State<stream<c, input...>, typename s::position>>>::type;
 };
 
-template <typename test, typename error = constant<Value<int, 22>>>
+template <typename test, typename error = constant<None>>
 struct token {
     template <typename s>
     using apply = _token_apply<test, s, typename s::input, error>;

@@ -12,5 +12,6 @@ int main(int argc, const char* argv[])
     using x = run_parser<parser, decltype("H:|-(>=2)-[a(==2@10)]-|"_stream)>;
     
     Printer<x>::Print(std::cout);
+
     return 0;
 }
