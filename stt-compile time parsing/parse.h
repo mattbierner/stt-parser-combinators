@@ -195,13 +195,13 @@ struct eof {
     Parse `p` then `q`, combining results with `f`.
 */
 template <typename p, typename q, typename f>
-struct binary {
+struct liftM2 {
     struct inner1 {
         template <typename x>
         struct apply {
             struct inner2 {
                 template <typename y>
-                using apply = identity<call<f, x, y>>;
+                using apply = identity<always<call<f, x, y>>>;
             };
             using type = bind<q, inner2>;
         };
@@ -215,15 +215,7 @@ struct binary {
     Conses the results of `a` onto `b`.
 */
 template <typename a, typename b>
-struct consParser {
-    struct appendOnto {
-        template <typename x, typename y>
-        using apply = identity<always<cons_t<x, y>>>;
-    };
-    
-    template <typename input>
-    using apply = identity<parse<binary<a, b, appendOnto>, input>>;
-};
+struct consParser : liftM2<a, b, mfunc<cons>> {};
 
 /**
     Parser `p` zero or more times.
@@ -231,15 +223,10 @@ struct consParser {
     Builds a list of results.
 */
 template <typename p>
-struct many {
-    template <typename input>
-    using apply = identity<
-        parse<
-            either<
-                consParser<p, many<p>>,
-                always<List<>>>,
-            input>>;
-};
+struct many :
+    either<
+        consParser<p, many<p>>,
+        always<List<>>> { };
 
 /**
     Parse `p` one or more times.
