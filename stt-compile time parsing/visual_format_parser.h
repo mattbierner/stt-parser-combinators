@@ -28,7 +28,7 @@ struct positiveNumber : many1<anyDigit> { };
 
 struct number :
     consParser<
-        optional<None, character<'-'>>,
+        optional<character<'-'>>,
         positiveNumber>  { };
 
 struct name : many1<anyLetter> { };
@@ -40,9 +40,9 @@ struct constant : choice<name, number> { };
 struct objectOfPredicate : choice<constant, name> { };
 
 struct predicate : seq<
-    optional<None, relation>,
+    optional<relation>,
     objectOfPredicate,
-    optional<None, next<character<'@'>, commit<priority>>>> { };
+    optional<next<character<'@'>, commit<priority>>>> { };
 
 struct predicateListWithParens :
     between<character<'('>, commit<character<')'>>,
@@ -66,14 +66,14 @@ struct view :
     between<character<'['>, commit<character<']'>>,
         commit<next<
             name,
-            optional<List<>, predicateListWithParens>>>> { };
+            optional<predicateListWithParens, List<>>>>> { };
 
 struct visualFormatString : seq<
-    optional<None, then<orientation, commit<character<':'>>>>,
-    optional<None, next<superview, connection>>,
+    optional<then<orientation, commit<character<':'>>>>,
+    optional<next<superview, connection>>,
     view,
     many<next<connection, view>>,
-    optional<None, then<connection, superview>>,
+    optional<then<connection, superview>>,
     eof,
     always<decltype("Format string is valid"_stream)>> { };
 

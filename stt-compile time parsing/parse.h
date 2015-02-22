@@ -110,7 +110,7 @@ struct choice :
 /**
     Run `p`. If it fails, succeed with `def`.
 */
-template <typename def, typename p>
+template <typename p, typename def = None>
 struct optional : either<p, always<def>> { };
 
 /**
