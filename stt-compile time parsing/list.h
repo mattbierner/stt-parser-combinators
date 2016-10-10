@@ -3,6 +3,8 @@
 */
 #pragma once
 
+#include <iosfwd>
+
 #include "printer.h"
 #include "utility.h"
 
