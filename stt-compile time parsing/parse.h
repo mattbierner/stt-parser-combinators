@@ -201,7 +201,7 @@ struct liftM2 {
         struct apply {
             struct inner2 {
                 template <typename y>
-                using apply = identity<always<call<f, x, y>>>;
+                using apply = identity<always<typename call<f, x, y>::type>>;
             };
             using type = bind<q, inner2>;
         };
