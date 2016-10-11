@@ -237,7 +237,7 @@ template <typename p>
 struct many1 : consParser<p, many<p>> { };
 
 /**
-    Parse one or more occurances of `p` seperated by `sep`.
+    Parse one or more occurances of `p` separated by `sep`.
     
     Builds a list of results.
 */
@@ -245,7 +245,7 @@ template <typename sep, typename p>
 struct sepBy1 : consParser<p, many<next<sep, p>>> { };
 
 /**
-    Parse zero or more occurances of `p` seperated by `sep`.
+    Parse zero or more occurances of `p` separated by `sep`.
     
     Builds a list of results.
 */
@@ -265,7 +265,7 @@ struct between : next<open, then<body, close>> { };
     Parse any character in `[begin, end]` character range.
 */
 template<char begin, char end>
-struct characterRanage {
+struct characterRange {
     struct inRange {
         template <char token>
         struct apply :
@@ -287,13 +287,13 @@ struct characterRanage {
     Parse any letter character.
 */
 struct anyLetter : choice<
-    characterRanage<'a', 'z'>,
-    characterRanage<'A', 'Z'>> { };
+    characterRange<'a', 'z'>,
+    characterRange<'A', 'Z'>> { };
 
 /**
     Parse any digit character.
 */
-struct anyDigit : characterRanage<'0', '9'> { };
+struct anyDigit : characterRange<'0', '9'> { };
 
 /**
     Parse a sequence of characters in order.
