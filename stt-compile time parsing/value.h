@@ -1,5 +1,8 @@
 #pragma once
 
+#include <ios>
+#include <ostream>
+
 #include "printer.h"
 
 template <typename T, T x>

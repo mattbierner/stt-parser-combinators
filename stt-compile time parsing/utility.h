@@ -3,6 +3,8 @@
 */
 #pragma once
 
+#include <utility>
+
 /**
     Value equality check.
 */

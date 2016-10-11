@@ -1,7 +1,9 @@
 #pragma once
 
+#include "list.h"
 #include "parse_error.h"
 #include "parse_state.h"
+#include "utility.h"
 #include "value_list.h"
 #include "value.h"
 
